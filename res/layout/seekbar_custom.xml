@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 自定义的seekbar 关键是  android:progressDrawable和android:thumb属性 -->
+<SeekBar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/seekBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top"
+    android:background="@android:color/transparent"
+    android:progressDrawable="@drawable/bg_bar"
+    android:thumb="@drawable/thumb_bar" >
+
+</SeekBar>
