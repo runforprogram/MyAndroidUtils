@@ -1,4 +1,4 @@
-package com.run.util;
+package com.utils.tools;
 
 public class Until {
 	public static String formatLongToTimeStr(int millisecond) {
