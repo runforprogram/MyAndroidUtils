@@ -3,35 +3,27 @@ package com.utils.tools;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+import android.os.Environment;
 import android.telephony.TelephonyManager;
-import android.view.Display;
+import android.util.Log;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 
-public class AndroidUtil {
-    private static Display display;
-    private static String TAG = "MyTools";
-    private static AndroidUtil myTools;
+import static android.os.Environment.MEDIA_MOUNTED;
 
+public class AndroidUtil {
+    private static String TAG =AndroidUtil.class.getSimpleName();
     private AndroidUtil() {
 
     }
-
-    /**
-     * Gets SDK.
-     *
-     * @return the SDK
-     */
-    public int getSDK() {
-        return Build.VERSION.SDK_INT; // SDK号
-    }
-
     /**
      * Gets phone imei.
      *
@@ -162,5 +154,50 @@ public class AndroidUtil {
             intent.setAction("android.intent.action.VIEW");
         }
         context.startActivity(intent);
+    }
+    /**
+     * Returns application cache directory. Cache directory will be created on SD card
+     * <i>("/Android/data/[app_package_name]/cache")</i> if card is mounted and app has appropriate permission. Else -
+     * Android defines cache directory on device's file system.
+     *
+     * @param context Application context
+     * @return Cache {@link java.io.File directory}
+     */
+    public static File getCacheDirectory(Context context) {
+        File appCacheDir = null;
+        if (MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) && hasExternalStoragePermission(context)) {
+            appCacheDir = getExternalCacheDir(context);
+        }
+        if (appCacheDir == null) {
+            appCacheDir = context.getCacheDir();
+        }
+        if (appCacheDir == null) {
+            Log.w(TAG, "Can't define system cache directory! The app should be re-installed.");
+        }
+        return appCacheDir;
+    }
+
+
+
+    private static File getExternalCacheDir(Context context) {
+        File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
+        File appCacheDir = new File(new File(dataDir, context.getPackageName()), "cache");
+        if (!appCacheDir.exists()) {
+            if (!appCacheDir.mkdirs()) {
+                Log.w(TAG,"Unable to create external cache directory");
+                return null;
+            }
+            try {
+                new File(appCacheDir, ".nomedia").createNewFile();
+            } catch (IOException e) {
+                Log.i(TAG,"Can't create \".nomedia\" file in application external cache directory");
+            }
+        }
+        return appCacheDir;
+    }
+
+    private static boolean hasExternalStoragePermission(Context context) {
+        int perm = context.checkCallingOrSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+        return perm == PackageManager.PERMISSION_GRANTED;
     }
 }

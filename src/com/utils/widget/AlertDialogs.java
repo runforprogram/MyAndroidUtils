@@ -1,7 +1,5 @@
 package com.utils.widget;
 
-import com.example.myandroidutils.R;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,10 +8,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.myandroidutils.R;
+
 /**
  * 弹窗类
  * 
- * @author Administrator
+ * @author chenrun
  * 
  */
 public class AlertDialogs {
@@ -28,8 +28,6 @@ public class AlertDialogs {
 			aDialog.dismiss();
 		}
 	}
-
-	// 带2个按钮的弹窗
 	/**
 	 * @param context
 	 *            显示的Activity
